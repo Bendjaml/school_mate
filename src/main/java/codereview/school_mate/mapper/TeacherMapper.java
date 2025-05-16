@@ -1,9 +1,7 @@
 package codereview.school_mate.mapper;
 
-import codereview.school_mate.dto.SubjectResponseDto;
 import codereview.school_mate.dto.TeacherRequestDto;
 import codereview.school_mate.dto.TeacherResponseDto;
-import codereview.school_mate.model.Subject;
 import codereview.school_mate.model.Teacher;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.BeanMapping;

@@ -11,5 +11,4 @@ public class StudentRequestDto {
     private String surname;
     private String patronymic;
     private Long schoolClassId;
-    private Long parentId;
 }

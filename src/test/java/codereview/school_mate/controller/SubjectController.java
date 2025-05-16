@@ -58,7 +58,7 @@ class SubjectControllerTest {
     void findById_ShouldReturnSubject() throws Exception {
         SubjectResponseDto responseDto = new SubjectResponseDto(1L, "Physics");
 
-        when(subjectService.findByIdSubject(1L)).thenReturn(responseDto);
+        when(subjectService.findDtoBySubjectId(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get("/api/subjects/{id}", 1L))
                 .andExpect(status().isOk())

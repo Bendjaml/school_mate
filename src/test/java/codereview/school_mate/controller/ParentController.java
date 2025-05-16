@@ -1,7 +1,6 @@
 package codereview.school_mate.controller;
 
 import codereview.school_mate.dto.ParentResponseDto;
-import codereview.school_mate.dto.StudentRequestDto;
 import codereview.school_mate.service.ParentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

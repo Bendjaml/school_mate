@@ -2,6 +2,7 @@ package codereview.school_mate.serviceImpl;
 
 import codereview.school_mate.dto.HomeworkRequestDto;
 import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.model.Homework;
 import codereview.school_mate.model.SchoolClass;
 import codereview.school_mate.model.Subject;
@@ -20,27 +21,19 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import codereview.school_mate.repository.SchoolClassRepository;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @Testcontainers
 @SpringBootTest
 @Transactional
-class HomeworkServiceImplIntegrationTest {
-
-    @Autowired
-    private HomeworkServiceImpl homeworkService;
-    @Autowired
-    private HomeworkRepository homeworkRepository;
-    @Autowired
-    private SchoolClassRepository schoolClassRepository;
-    @Autowired
-    private SubjectRepository subjectRepository;
-
-    private SchoolClass testClass;
-    private Subject testSubject;
+class HomeworkServiceImplTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
@@ -52,48 +45,85 @@ class HomeworkServiceImplIntegrationTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
+    @Autowired
+    private HomeworkServiceImpl homeworkService;
+    @Autowired
+    private HomeworkRepository homeworkRepository;
+    @Autowired
+    private SubjectRepository subjectRepository;
+    @Autowired
+    private SchoolClassRepository schoolClassRepository;
+
+    private Subject testSubject;
+    private SchoolClass testClass;
 
     @BeforeEach
     void setUp() {
-        testClass = new SchoolClass();
-        testClass.setName("Test Class");
-        testClass = schoolClassRepository.save(testClass);
-
         testSubject = new Subject();
         testSubject.setName("Math");
         testSubject = subjectRepository.save(testSubject);
+
+        testClass = new SchoolClass();
+        testClass.setName("10-A");
+        testClass = schoolClassRepository.save(testClass);
     }
 
     @Test
-    void findAllHomework_ShouldReturnAllHomeworks() {
-        createTestHomework();
-        createTestHomework();
+    void createHomework_ShouldSaveWithRelations() {
+        HomeworkRequestDto request = new HomeworkRequestDto(
+                LocalDateTime.now(), "Algebra HW", testSubject.getId(), testClass.getId()
+        );
 
-        List<HomeworkResponseDto> result = homeworkService.findAllHomework();
+        HomeworkResponseDto result = homeworkService.createHomework(request);
 
-        assertEquals(2, result.size());
+        assertNotNull(result.getId());
+        assertEquals("Algebra HW", result.getDescriptionHomeworks());
+        assertEquals(testSubject.getId(), result.getSubject().getId());
     }
 
     @Test
-    void findHomeworkByClassId_ShouldFilterByClass() {
-        HomeworkRequestDto hw1 = createTestHomework();
-        SchoolClass anotherClass = schoolClassRepository.save(new SchoolClass());
-        Homework hw2 = new Homework();
-        hw2.setSchoolClass(anotherClass);
-        homeworkRepository.save(hw2);
+    void createHomework_ShouldThrow_WhenSubjectNotFound() {
+        HomeworkRequestDto request = new HomeworkRequestDto(
+                LocalDateTime.now(), "Physics HW", 999L, testClass.getId()
+        );
 
-        List<HomeworkResponseDto> result = homeworkService.findHomeworkByClassId(testClass.getId());
-
-        assertEquals(1, result.size());
-        assertEquals(hw1.getClassId(), result.get(0).getId());
+        assertThrows(NotFoundException.class, () -> homeworkService.createHomework(request));
     }
 
-    private HomeworkRequestDto createTestHomework() {
-        HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto();
-        homeworkRequestDto.setClassId(testClass.getId());
-        homeworkRequestDto.setSubjectId(testSubject.getId());
-        homeworkRequestDto.setDescription("test description");
-        homeworkRequestDto.setDate(LocalDateTime.now());
-        return homeworkRequestDto;
+    @Test
+    void findHomeworkById_ShouldReturn_WhenExists() {
+        Homework saved = createTestHomework();
+        HomeworkResponseDto result = homeworkService.findHomeworkById(saved.getId());
+
+        assertEquals(saved.getId(), result.getId());
+    }
+
+    @Test
+    void updateHomework_ShouldUpdateFields() {
+        Homework saved = createTestHomework();
+        HomeworkRequestDto update = new HomeworkRequestDto(
+                LocalDateTime.now().plusDays(1), "Updated HW", testSubject.getId(), testClass.getId()
+        );
+
+        HomeworkResponseDto result = homeworkService.updateHomework(saved.getId(), update);
+
+        assertEquals("Updated HW", result.getDescriptionHomeworks());
+    }
+
+    @Test
+    void deleteHomework_ShouldRemoveFromDb() {
+        Homework saved = createTestHomework();
+        homeworkService.deleteHomework(saved.getId());
+
+        assertFalse(homeworkRepository.existsById(saved.getId()));
+    }
+
+    private Homework createTestHomework() {
+        Homework homework = new Homework();
+        homework.setDescriptionHomeworks("Test HW");
+        homework.setDate(LocalDateTime.now());
+        homework.setSubject(testSubject);
+        homework.setSchoolClass(testClass);
+        return homeworkRepository.save(homework);
     }
 }

@@ -16,5 +16,5 @@ public class ParentResponseDto {
     private String surname;
     private String patronymic;
     private String contacts;
-    private List<Student> children= new ArrayList<>();
+    private List<StudentResponseDto> children= new ArrayList<>();
 }

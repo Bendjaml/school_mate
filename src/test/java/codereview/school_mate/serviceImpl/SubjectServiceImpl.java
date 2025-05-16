@@ -1,21 +1,11 @@
 package codereview.school_mate.serviceImpl;
 
-import codereview.school_mate.dto.StudentRequestDto;
-import codereview.school_mate.dto.StudentResponseDto;
-import codereview.school_mate.mapper.StudentMapper;
-import codereview.school_mate.model.Parent;
-import codereview.school_mate.model.SchoolClass;
-import codereview.school_mate.model.Student;
-import codereview.school_mate.repository.ParentRepository;
-import codereview.school_mate.repository.SchoolClassRepository;
-import codereview.school_mate.repository.StudentRepository;
-import codereview.school_mate.service.serviceImpl.StudentServiceImpl;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import codereview.school_mate.dto.SubjectRequestDto;
+import codereview.school_mate.dto.SubjectResponseDto;
+import codereview.school_mate.model.Subject;
+import codereview.school_mate.repository.SubjectRepository;
+import codereview.school_mate.service.serviceImpl.SubjectServiceImpl;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -23,25 +13,24 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 
-@SpringBootTest
 @Testcontainers
-class StudentServiceImplTest {
-
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private ParentRepository parentRepository;
-    @Autowired
-    private SchoolClassRepository schoolClassRepository;
-    @Autowired
-    private StudentMapper studentMapper;
-    @Autowired
-    private StudentServiceImpl studentService;
+@SpringBootTest
+@Transactional
+class SubjectServiceImplTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
@@ -52,108 +41,106 @@ class StudentServiceImplTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
+
+    @Autowired
+    private SubjectServiceImpl subjectService;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    private Subject testSubject;
+
     @BeforeEach
     void setUp() {
-        studentRepository.deleteAll();
-        parentRepository.deleteAll();
-        schoolClassRepository.deleteAll();
-    }
-    @AfterAll
-    static void tearDown() {
-        postgres.stop();
+        testSubject = new Subject();
+        testSubject.setName("Mathematics");
+        testSubject = subjectRepository.save(testSubject);
     }
 
     @Test
-    void create_ShouldPersistStudentWithAllRequiredFields() {
-        Parent parent = parentRepository.save(createValidParent());
-        SchoolClass schoolClass = schoolClassRepository.save(createValidSchoolClass());
+    @DisplayName("Создание предмета - успешный сценарий")
+    void createSubject_ShouldSaveSubject() {
+        SubjectRequestDto request = new SubjectRequestDto();
+        request.setName("Physics");
 
-        StudentRequestDto request = new StudentRequestDto();
-        request.setName("Alice");
-        request.setSurname("Johnson");
-        request.setPatronymic("Marie");
-        request.setParentId(parent.getId());
-        request.setSchoolClassId(schoolClass.getId());
-
-        StudentResponseDto result = studentService.createStudent(request);
+        SubjectResponseDto result = subjectService.createSubject(request);
 
         assertNotNull(result.getId());
-        assertEquals(1, studentRepository.count());
-
-        Student saved = studentRepository.findById(result.getId()).orElseThrow();
-        assertEquals("Alice", saved.getName());
-        assertEquals(parent.getId(), saved.getParent().getId());
-        assertEquals(schoolClass.getId(), saved.getSchoolClass().getId());
+        assertEquals("Physics", result.getName());
+        assertTrue(subjectRepository.existsById(result.getId()));
     }
 
     @Test
-    void findById_ShouldReturnStudentWithAllFields() {
-        Parent parent = parentRepository.save(createValidParent());
-        SchoolClass schoolClass = schoolClassRepository.save(createValidSchoolClass());
-        Student student = studentRepository.save(createValidStudent(parent, schoolClass));
+    @DisplayName("Получение предмета по ID - успешный сценарий")
+    void findDtoBySubject_ShouldReturnSubject_Id_WhenExists() {
+        SubjectResponseDto result = subjectService.findDtoBySubjectId(testSubject.getId());
 
-        StudentResponseDto result = studentService.findByIdStudent(student.getId());
-
-        assertEquals(student.getId(), result.getId());
-        assertEquals("Alice", result.getName());
-        assertEquals("Johnson", result.getSurname());
-        assertEquals("Marie", result.getPatronymic());
+        assertEquals(testSubject.getId(), result.getId());
+        assertEquals("Mathematics", result.getName());
     }
 
     @Test
-    void update_ShouldModifyStudentData() {
-        Parent parent = parentRepository.save(createValidParent());
-        SchoolClass schoolClass = schoolClassRepository.save(createValidSchoolClass());
-        Student student = studentRepository.save(createValidStudent(parent, schoolClass));
-
-        StudentRequestDto updateRequest = new StudentRequestDto();
-        updateRequest.setName("Updated");
-        updateRequest.setSurname("Name");
-        updateRequest.setPatronymic("Patronymic");
-        updateRequest.setParentId(parent.getId());
-        updateRequest.setSchoolClassId(schoolClass.getId());
-
-        studentService.updateStudent(student.getId(), updateRequest);
-
-        Student updated = studentRepository.findById(student.getId()).orElseThrow();
-        assertEquals("Updated", updated.getName());
-        assertEquals("Name", updated.getSurname());
-        assertEquals("Patronymic", updated.getPatronymic());
+    @DisplayName("Получение предмета по ID - предмет не найден")
+    void findDtoBySubject_Id_ShouldThrow_WhenNotExists() {
+        assertThrows(RuntimeException.class, () -> subjectService.findDtoBySubjectId(999L));
     }
 
     @Test
-    void delete_ShouldRemoveStudentFromDB() {
-        Parent parent = parentRepository.save(createValidParent());
-        SchoolClass schoolClass = schoolClassRepository.save(createValidSchoolClass());
-        Student student = studentRepository.save(createValidStudent(parent, schoolClass));
+    @DisplayName("Получение всех предметов")
+    void findAllSubject_ShouldReturnAllSubjects() {
+        Subject anotherSubject = new Subject();
+        anotherSubject.setName("Chemistry");
+        subjectRepository.save(anotherSubject);
 
-        studentService.deleteStudent(student.getId());
+        List<SubjectResponseDto> result = subjectService.findAllSubject();
 
-        assertFalse(studentRepository.existsById(student.getId()));
-    }
-    private Parent createValidParent() {
-        Parent parent = new Parent();
-        parent.setName("John");
-        parent.setSurname("Doe");
-        parent.setPatronymic("Smith");
-        parent.setContacts("john@example.com");
-        return parent;
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(s -> s.getName().equals("Mathematics")));
+        assertTrue(result.stream().anyMatch(s -> s.getName().equals("Chemistry")));
     }
 
-    private SchoolClass createValidSchoolClass() {
-        SchoolClass schoolClass = new SchoolClass();
-        schoolClass.setName("1-A");
-        return schoolClass;
+    @Test
+    @DisplayName("Обновление предмета - успешный сценарий")
+    void updateSubject_ShouldUpdateSubject() {
+        SubjectRequestDto updateRequest = new SubjectRequestDto();
+        updateRequest.setName("Advanced Math");
+
+        SubjectResponseDto result = subjectService.updateSubject(testSubject.getId(), updateRequest);
+
+        assertEquals(testSubject.getId(), result.getId());
+        assertEquals("Advanced Math", result.getName());
     }
 
-    private Student createValidStudent(Parent parent, SchoolClass schoolClass) {
-        Student student = new Student();
-        student.setName("Alice");
-        student.setSurname("Johnson");
-        student.setPatronymic("Marie");
-        student.setParent(parent);
-        student.setSchoolClass(schoolClass);
-        return student;
+    @Test
+    @DisplayName("Обновление предмета - предмет не найден")
+    void updateSubject_ShouldThrow_WhenNotExists() {
+        SubjectRequestDto updateRequest = new SubjectRequestDto();
+        updateRequest.setName("Biology");
+
+        assertThrows(RuntimeException.class,
+                () -> subjectService.updateSubject(999L, updateRequest));
     }
 
+    @Test
+    @DisplayName("Удаление предмета - успешный сценарий")
+    void deleteSubject_ShouldRemoveSubject() {
+        subjectService.deleteSubject(testSubject.getId());
+
+        assertFalse(subjectRepository.existsById(testSubject.getId()));
+    }
+
+    @Test
+    @DisplayName("Удаление предмета - предмет не найден")
+    void deleteSubject_ShouldNotThrow_WhenNotExists() {
+        assertDoesNotThrow(() -> subjectService.deleteSubject(999L));
+    }
+
+    @Test
+    @DisplayName("Создание предмета - проверка валидации")
+    void createSubject_ShouldThrow_WhenInvalidData() {
+        SubjectRequestDto invalidRequest = new SubjectRequestDto();
+        invalidRequest.setName(""); // Пустое имя
+
+        assertThrows(Exception.class, () -> subjectService.createSubject(invalidRequest));
+    }
 }

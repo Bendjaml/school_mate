@@ -1,6 +1,6 @@
 package codereview.school_mate.dto;
 
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 public class HomeworkRequestDto {
     @NotNull(message = "Дата обязательна")
-    @PastOrPresent(message = "Дата создания не может быть в будущем")
+    @Future(message = "Дата выполнения домашнего задания должны быть в будущем времени")
     private LocalDateTime date;
 
     @NotBlank(message = "Описание не может быть пустым")

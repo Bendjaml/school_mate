@@ -28,7 +28,7 @@ public class Homework {
 
         @ManyToOne
         @JoinColumn(name = "subject_id", nullable = false)
-        private SchoolClass subject;
+        private Subject subject;
 
         @ManyToOne
         @JoinColumn(name = "class_id", nullable = false)

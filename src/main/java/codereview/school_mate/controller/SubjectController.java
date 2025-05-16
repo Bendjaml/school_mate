@@ -46,7 +46,7 @@ public class SubjectController {
     @GetMapping("/{id}")
     public ResponseEntity<SubjectResponseDto> findByIdSubject(
             @Parameter(description = "ID предмета", required = true) @PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(subjectService.findByIdSubject(id));
+        return ResponseEntity.status(HttpStatus.OK).body(subjectService.findDtoBySubjectId(id));
     }
 
     @Operation(summary = "Получить все предметы", description = "Возвращает список всех учебных предметов")

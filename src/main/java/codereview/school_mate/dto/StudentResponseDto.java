@@ -13,6 +13,6 @@ public class StudentResponseDto {
     private String name;
     private String surname;
     private String patronymic;
-    private SchoolClass schoolClass;
-    private Parent parent;
+    private SchoolClassResponseDto schoolClass;
+    private ParentResponseDto parent;
 }

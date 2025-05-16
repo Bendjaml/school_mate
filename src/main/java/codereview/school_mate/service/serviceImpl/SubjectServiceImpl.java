@@ -26,10 +26,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public SubjectResponseDto findByIdSubject(Long id) {
+    public SubjectResponseDto findDtoBySubjectId(Long id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
         return subjectMapper.toDto(subject);
+    }
+
+    @Override
+    public Subject findSubjectBySubjectId(Long id) {
+        return subjectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
     }
 
     @Override
