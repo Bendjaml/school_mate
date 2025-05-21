@@ -3,6 +3,7 @@ package codereview.school_mate.controller;
 import codereview.school_mate.dto.SubjectRequestDto;
 import codereview.school_mate.dto.SubjectResponseDto;
 import codereview.school_mate.service.SubjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +35,7 @@ public class SubjectController {
             @ApiResponse(responseCode = "400", description = "Некорректные данные")
     })
     @PostMapping
-    public ResponseEntity<SubjectResponseDto> createSubject(@RequestBody SubjectRequestDto dto) {
+    public ResponseEntity<SubjectResponseDto> createSubject(@Valid @RequestBody SubjectRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(subjectService.createSubject(dto));
     }
 
@@ -63,7 +64,7 @@ public class SubjectController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<SubjectResponseDto> updateSubject(
-            @Parameter(description = "ID предмета", required = true) @PathVariable Long id,
+            @Parameter(description = "ID предмета", required = true)@Valid @PathVariable Long id,
             @RequestBody SubjectRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(subjectService.updateSubject(id, dto));
     }

@@ -3,6 +3,7 @@ package codereview.school_mate.controller;
 import codereview.school_mate.dto.StudentRequestDto;
 import codereview.school_mate.dto.StudentResponseDto;
 import codereview.school_mate.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +35,7 @@ public class StudentController {
             @ApiResponse(responseCode = "400", description = "Некорректные данные")
     })
     @PostMapping
-    public ResponseEntity<StudentResponseDto> createStudent(@RequestBody StudentRequestDto dto) {
+    public ResponseEntity<StudentResponseDto> createStudent(@Valid @RequestBody StudentRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createStudent(dto));
     }
 
@@ -63,7 +64,7 @@ public class StudentController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
-            @Parameter(description = "ID ученика", required = true) @PathVariable Long id,
+            @Parameter(description = "ID ученика", required = true)@Valid @PathVariable Long id,
             @RequestBody StudentRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(studentService.updateStudent(id, dto));
     }
