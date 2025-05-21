@@ -1,5 +1,5 @@
 # docker-compose.yml
-#version: '3.8'
+version: '3.8'
 services:
   school_mate_app:
     build:
@@ -13,6 +13,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SPRING_LIQUIBASE_ENABLED=false
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - SPRING_JPA_SHOW_SQL=true
     depends_on:
       - school_mate_db
     networks:
@@ -25,7 +26,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:

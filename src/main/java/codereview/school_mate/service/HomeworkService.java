@@ -1,7 +1,7 @@
 package codereview.school_mate.service;
 
-import codereview.school_mate.dto.HomeworkRequestDto;
-import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.dto.request.HomeworkRequestDto;
+import codereview.school_mate.dto.responce.HomeworkResponseDto;
 
 import java.util.List;
 

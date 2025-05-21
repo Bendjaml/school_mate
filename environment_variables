@@ -5,6 +5,9 @@ DB_URL=jdbc:postgresql://school_mate_db:5432/school_mate
 DB_USER=postgres
 DB_PASSWORD=postgres
 DB_NAME=school_mate
+JWT_SECRET=984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+JWT_LIFETIME_ACCESS=1h
+JWT_LIFETIME_REFRESH=24h
 
 Как добавить Environment Variables в Spring Boot приложение?
 1. В верхнем меню: Run → Edit Configurations

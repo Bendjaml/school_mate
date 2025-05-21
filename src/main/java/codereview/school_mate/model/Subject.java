@@ -10,7 +10,7 @@ import lombok. Data;
 
 @Entity
 @Data
-@Table(name = "subject")
+@Table(name = "subjects")
 public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,5 +18,4 @@ public class Subject {
 
     @Column(nullable = false, unique = true)
     private String name;
-
 }

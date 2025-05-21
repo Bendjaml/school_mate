@@ -1,7 +1,8 @@
 package codereview.school_mate.mapper;
 
-import codereview.school_mate.dto.TeacherRequestDto;
-import codereview.school_mate.dto.TeacherResponseDto;
+import codereview.school_mate.dto.request.registration.TeacherRegistrationRequestDto;
+import codereview.school_mate.dto.request.TeacherRequestDto;
+import codereview.school_mate.dto.responce.TeacherResponseDto;
 import codereview.school_mate.model.Teacher;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.BeanMapping;
@@ -14,12 +15,12 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {SubjectMapper.class})
 public interface TeacherMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "surname", source = "lastName")
+    @Mapping(target = "surname", source = "surname")
     @Mapping(target = "subjects", ignore = true)
     @Mapping(target = "classes", ignore = true)
     Teacher toEntity(TeacherRequestDto dto);
 
-    @Mapping(target = "lastName", source = "surname")
+    @Mapping(target = "surname", source = "surname")
     TeacherResponseDto toDto(Teacher entity);
 
     List<TeacherResponseDto> teachersToTeacherResponseDtos(List<Teacher> teachers);
@@ -29,6 +30,8 @@ public interface TeacherMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "subjects", ignore = true)
     @Mapping(target = "classes", ignore = true)
-    @Mapping(target = "surname", source = "lastName")
+    @Mapping(target = "surname", source = "surname")
     void updateEntityFromDto(TeacherRequestDto dto, @MappingTarget Teacher entity);
+
+    Teacher registrationDtoToTeacher(TeacherRegistrationRequestDto teacherRegistrationRequestDto);
 }

@@ -1,7 +1,7 @@
 package codereview.school_mate.mapper;
 
-import codereview.school_mate.dto.HomeworkRequestDto;
-import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.dto.request.HomeworkRequestDto;
+import codereview.school_mate.dto.responce.HomeworkResponseDto;
 import codereview.school_mate.model.Homework;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,8 +19,8 @@ public interface HomeworkMapper {
     @Mapping(target = "schoolClass", ignore = true)
     Homework toEntity(HomeworkRequestDto dto);
 
-    @Mapping(target = "subjectId", source = "subject.id")
-    @Mapping(target = "classId", source = "schoolClass.id")
+//    @Mapping(target = "subjectId", source = "subject.id")
+//    @Mapping(target = "classId", source = "schoolClass.id")
     HomeworkResponseDto toDto(Homework entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

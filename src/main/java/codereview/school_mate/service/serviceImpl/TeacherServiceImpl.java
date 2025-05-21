@@ -1,10 +1,13 @@
 package codereview.school_mate.service.serviceImpl;
 
-import codereview.school_mate.dto.TeacherRequestDto;
-import codereview.school_mate.dto.TeacherResponseDto;
+import codereview.school_mate.dto.request.registration.TeacherRegistrationRequestDto;
+import codereview.school_mate.dto.request.TeacherRequestDto;
+import codereview.school_mate.dto.responce.TeacherResponseDto;
+import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.mapper.TeacherMapper;
 import codereview.school_mate.model.Subject;
 import codereview.school_mate.model.Teacher;
+import codereview.school_mate.model.User;
 import codereview.school_mate.repository.SubjectRepository;
 import codereview.school_mate.repository.TeacherRepository;
 import codereview.school_mate.service.TeacherService;
@@ -23,15 +26,16 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public TeacherResponseDto createTeacher(TeacherRequestDto dto) {
-        Teacher teacher = teacherMapper.toEntity(dto);
+    public TeacherResponseDto createTeacher(TeacherRegistrationRequestDto dto, User user) {
+        Teacher teacher = teacherMapper.registrationDtoToTeacher(dto);
+        teacher.setUser(user);
         return teacherMapper.toDto(teacherRepository.save(teacher));
     }
 
     @Override
     public TeacherResponseDto findByIdTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));//коментарий полнее с данными по id
+                .orElseThrow(() -> new NotFoundException("Teacher not found"));//коментарий полнее с данными по id
         return teacherMapper.toDto(teacher);
     }
 
@@ -44,7 +48,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public TeacherResponseDto updateTeacher(Long id, TeacherRequestDto dto) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new NotFoundException("Teacher not found"));
         teacherMapper.updateEntityFromDto(dto, teacher);
         return teacherMapper.toDto(teacherRepository.save(teacher));
     }
@@ -59,9 +63,9 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public TeacherResponseDto addSubjectToTeacher(Long teacherId, Long subjectId) {
         Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new NotFoundException("Teacher not found"));
         Subject subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new NotFoundException("Subject not found"));
 
         teacher.getSubjects().add(subject);
         Teacher savedTeacher = teacherRepository.save(teacher);

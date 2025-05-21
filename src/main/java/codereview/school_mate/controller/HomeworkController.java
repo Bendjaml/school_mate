@@ -1,7 +1,7 @@
 package codereview.school_mate.controller;
 
-import codereview.school_mate.dto.HomeworkRequestDto;
-import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.dto.request.HomeworkRequestDto;
+import codereview.school_mate.dto.responce.HomeworkResponseDto;
 import codereview.school_mate.service.HomeworkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,8 +1,20 @@
 package codereview.school_mate.model;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Set;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import lombok. Data;
 import lombok. EqualsAndHashCode;
 
@@ -25,7 +37,12 @@ public class Teacher {
     @Column(name = "patronymic")
     private String patronymic;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "teachers_classes",
             joinColumns = @JoinColumn(name = "teacher_id",referencedColumnName = "id"),
@@ -34,7 +51,7 @@ public class Teacher {
     @EqualsAndHashCode.Exclude
     private Set<SchoolClass> classes;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),

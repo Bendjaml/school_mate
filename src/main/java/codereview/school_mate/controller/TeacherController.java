@@ -1,7 +1,7 @@
 package codereview.school_mate.controller;
 
-import codereview.school_mate.dto.TeacherRequestDto;
-import codereview.school_mate.dto.TeacherResponseDto;
+import codereview.school_mate.dto.request.TeacherRequestDto;
+import codereview.school_mate.dto.responce.TeacherResponseDto;
 import codereview.school_mate.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +28,6 @@ import java.util.List;
 @Tag(name = "Учителя", description = "Управление данными учителей")
 public class TeacherController {
     private final TeacherService teacherService;
-
-    @Operation(summary = "Создать нового учителя", description = "Создает запись о новом учителе")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Учитель успешно создан"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные")
-    })
-    @PostMapping
-    public ResponseEntity<TeacherResponseDto> createTeacher(@Valid @RequestBody TeacherRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(teacherService.createTeacher(dto));
-    }
 
     @Operation(summary = "Получить учителя по ID", description = "Возвращает данные учителя по его идентификатору")
     @ApiResponses(value = {

@@ -1,7 +1,8 @@
 package codereview.school_mate.service.serviceImpl;
 
-import codereview.school_mate.dto.SubjectRequestDto;
-import codereview.school_mate.dto.SubjectResponseDto;
+import codereview.school_mate.dto.request.SubjectRequestDto;
+import codereview.school_mate.dto.responce.SubjectResponseDto;
+import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.mapper.SubjectMapper;
 import codereview.school_mate.model.Subject;
 import codereview.school_mate.repository.SubjectRepository;
@@ -28,7 +29,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public SubjectResponseDto findDtoBySubjectId(Long id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new NotFoundException("Subject not found"));
         return subjectMapper.toDto(subject);
     }
 
@@ -47,7 +48,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Transactional
     public SubjectResponseDto updateSubject(Long id, SubjectRequestDto dto) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new NotFoundException("Subject not found"));
         subjectMapper.updateEntityFromDto(dto, subject);
         return subjectMapper.toDto(subjectRepository.save(subject));
     }

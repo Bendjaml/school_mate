@@ -2,7 +2,7 @@ package codereview.school_mate.enums;
 
 public enum RoleEnum {
 
-    ADMIN("admin"), STUDENT("student"), TEACHER("teacher");
+    ADMIN("ADMIN"), STUDENT("STUDENT"), TEACHER("TEACHER"), PARENT("PARENT");
 
     private final String name;
 

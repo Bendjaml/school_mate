@@ -1,7 +1,7 @@
 package codereview.school_mate.controller;
 
-import codereview.school_mate.dto.SubjectRequestDto;
-import codereview.school_mate.dto.SubjectResponseDto;
+import codereview.school_mate.dto.request.SubjectRequestDto;
+import codereview.school_mate.dto.responce.SubjectResponseDto;
 import codereview.school_mate.service.SubjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

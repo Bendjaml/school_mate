@@ -1,7 +1,8 @@
 package codereview.school_mate.mapper;
 
-import codereview.school_mate.dto.StudentRequestDto;
-import codereview.school_mate.dto.StudentResponseDto;
+import codereview.school_mate.dto.request.registration.StudentRegistrationRequestDto;
+import codereview.school_mate.dto.request.StudentRequestDto;
+import codereview.school_mate.dto.responce.StudentResponseDto;
 import codereview.school_mate.model.Student;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.BeanMapping;
@@ -25,4 +26,6 @@ public interface StudentMapper {
     @Mapping(target = "parent", ignore = true)
     @Mapping(target = "schoolClass", ignore = true)
     void updateEntityFromDto(StudentRequestDto dto, @MappingTarget Student entity);
+
+    Student registrationDtoToStudent(StudentRegistrationRequestDto studentRegistrationRequestDto);
 }

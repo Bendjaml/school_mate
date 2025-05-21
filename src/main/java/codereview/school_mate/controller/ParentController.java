@@ -1,7 +1,7 @@
 package codereview.school_mate.controller;
 
-import codereview.school_mate.dto.ParentRequestDto;
-import codereview.school_mate.dto.ParentResponseDto;
+import codereview.school_mate.dto.request.ParentRequestDto;
+import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.service.ParentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,16 +28,6 @@ import java.util.List;
 @Tag(name = "Родители", description = "Управление данными родителей")
 public class ParentController {
     private final ParentService parentService;
-
-    @Operation(summary = "Создать нового родителя", description = "Создает запись о новом родителе")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Родитель успешно создан"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные")
-    })
-    @PostMapping
-    public ResponseEntity<ParentResponseDto> createParent(@Valid @RequestBody ParentRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(parentService.createParent(dto));
-    }
 
     @Operation(summary = "Получить родителя по ID", description = "Возвращает данные родителя по его идентификатору")
     @ApiResponses(value = {

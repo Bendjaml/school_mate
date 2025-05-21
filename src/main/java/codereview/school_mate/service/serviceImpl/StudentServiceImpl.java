@@ -1,11 +1,14 @@
 package codereview.school_mate.service.serviceImpl;
 
-import codereview.school_mate.dto.StudentRequestDto;
-import codereview.school_mate.dto.StudentResponseDto;
+import codereview.school_mate.dto.request.registration.StudentRegistrationRequestDto;
+import codereview.school_mate.dto.request.StudentRequestDto;
+import codereview.school_mate.dto.responce.StudentResponseDto;
+import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.mapper.StudentMapper;
 import codereview.school_mate.model.Parent;
 import codereview.school_mate.model.SchoolClass;
 import codereview.school_mate.model.Student;
+import codereview.school_mate.model.User;
 import codereview.school_mate.repository.ParentRepository;
 import codereview.school_mate.repository.SchoolClassRepository;
 import codereview.school_mate.repository.StudentRepository;
@@ -26,25 +29,21 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public StudentResponseDto createStudent(StudentRequestDto dto) {
-        Parent parent = parentRepository.findById(dto.getParentId())
-                .orElseThrow(() -> new RuntimeException("Parent not found with id: " + dto.getParentId()));
-
+    public StudentResponseDto createStudent(StudentRegistrationRequestDto dto, User user) {
         SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId())
-                .orElseThrow(() -> new RuntimeException("SchoolClass not found with id: " + dto.getSchoolClassId()));
+                .orElseThrow(() -> new NotFoundException("SchoolClass not found with id: " + dto.getSchoolClassId()));
 
-        Student student = studentMapper.toEntity(dto);
-        student.setParent(parent);
+        Student student = studentMapper.registrationDtoToStudent(dto);
+        student.setUser(user);
         student.setSchoolClass(schoolClass);
 
-        Student savedStudent = studentRepository.save(student);
-        return studentMapper.studentToStudentResponseDto(savedStudent);
+        return studentMapper.studentToStudentResponseDto(studentRepository.save(student));
     }
 
     @Override
     public StudentResponseDto findByIdStudent(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Student not found with id: " + id));
         return studentMapper.studentToStudentResponseDto(student);
     }
 
@@ -57,17 +56,17 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public StudentResponseDto updateStudent(Long id, StudentRequestDto dto) {
         Student existingStudent = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new NotFoundException("Student not found"));
 
         if (dto.getParentId() != null) {
             Parent parent = parentRepository.findById(dto.getParentId())
-                    .orElseThrow(() -> new RuntimeException("Parent not found"));
+                    .orElseThrow(() -> new NotFoundException("Parent not found"));
             existingStudent.setParent(parent);
         }
 
         if (dto.getSchoolClassId() != null) {
             SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId())
-                    .orElseThrow(() -> new RuntimeException("SchoolClass not found"));
+                    .orElseThrow(() -> new NotFoundException("SchoolClass not found"));
             existingStudent.setSchoolClass(schoolClass);
         }
 

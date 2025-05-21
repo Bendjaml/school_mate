@@ -1,15 +1,13 @@
 package codereview.school_mate.service.serviceImpl;
 
-import codereview.school_mate.dto.HomeworkRequestDto;
-import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.dto.request.HomeworkRequestDto;
+import codereview.school_mate.dto.responce.HomeworkResponseDto;
 import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.mapper.HomeworkMapper;
 import codereview.school_mate.model.Homework;
 import codereview.school_mate.model.SchoolClass;
 import codereview.school_mate.model.Subject;
 import codereview.school_mate.repository.HomeworkRepository;
-import codereview.school_mate.repository.SchoolClassRepository;
-import codereview.school_mate.repository.SubjectRepository;
 import codereview.school_mate.service.HomeworkService;
 import codereview.school_mate.service.SchoolClassService;
 import codereview.school_mate.service.SubjectService;

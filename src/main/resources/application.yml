@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/school_mate
+    url: jdbc:postgresql://localhost:5433/school_mate
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -14,6 +14,10 @@ spring:
 #    exclude:
 #      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 #      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+jwt:
+  secret: ${JWT_SECRET}
+  lifetimeAccessToken: ${JWT_LIFETIME_ACCESS}
+  lifetimeRefreshToken: ${JWT_LIFETIME_REFRESH}
 
 # Настройки для Swagger
 springdoc:

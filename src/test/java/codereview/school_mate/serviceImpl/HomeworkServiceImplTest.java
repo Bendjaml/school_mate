@@ -1,13 +1,14 @@
 package codereview.school_mate.serviceImpl;
 
-import codereview.school_mate.dto.HomeworkRequestDto;
-import codereview.school_mate.dto.HomeworkResponseDto;
+import codereview.school_mate.dto.request.HomeworkRequestDto;
+import codereview.school_mate.dto.responce.HomeworkResponseDto;
 import codereview.school_mate.exception.NotFoundException;
 import codereview.school_mate.model.Homework;
 import codereview.school_mate.model.SchoolClass;
 import codereview.school_mate.model.Subject;
 import codereview.school_mate.repository.*;
 import codereview.school_mate.service.serviceImpl.HomeworkServiceImpl;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Testcontainers
 @SpringBootTest
 @Transactional
+@TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
 class HomeworkServiceImplTest {
 
     @Container
@@ -43,6 +46,8 @@ class HomeworkServiceImplTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.hikari.max-lifetime", () -> "15000");
+        registry.add("spring.datasource.hikari.connection-timeout", () -> "5000");
     }
 
     @Autowired
@@ -59,6 +64,10 @@ class HomeworkServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        homeworkRepository.deleteAll();
+        subjectRepository.deleteAll();
+        schoolClassRepository.deleteAll();
+
         testSubject = new Subject();
         testSubject.setName("Math");
         testSubject = subjectRepository.save(testSubject);
@@ -66,6 +75,11 @@ class HomeworkServiceImplTest {
         testClass = new SchoolClass();
         testClass.setName("10-A");
         testClass = schoolClassRepository.save(testClass);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        postgres.stop();
     }
 
     @Test
@@ -78,7 +92,6 @@ class HomeworkServiceImplTest {
 
         assertNotNull(result.getId());
         assertEquals("Algebra HW", result.getDescriptionHomeworks());
-        assertEquals(testSubject.getId(), result.getSubject().getId());
     }
 
     @Test

@@ -1,7 +1,8 @@
 package codereview.school_mate.mapper;
 
-import codereview.school_mate.dto.ParentRequestDto;
-import codereview.school_mate.dto.ParentResponseDto;
+import codereview.school_mate.dto.request.registration.ParentRegistrationRequestDto;
+import codereview.school_mate.dto.request.ParentRequestDto;
+import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.model.Parent;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -14,4 +15,5 @@ public interface ParentMapper {
     void updateEntityFromDto(ParentRequestDto dto, @MappingTarget Parent entity);
 
     List<ParentResponseDto> toDtos(List<Parent> parents);
+    Parent registrationDtoToParent(ParentRegistrationRequestDto parentRegistrationRequestDto);
 }
