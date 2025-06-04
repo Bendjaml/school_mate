@@ -1,6 +1,7 @@
 package codereview.school_mate.service.serviceImpl;
 
 import codereview.school_mate.dto.request.JwtRequest;
+import codereview.school_mate.dto.request.registration.AdminRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.ParentRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.StudentRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.TeacherRegistrationRequestDto;
@@ -8,6 +9,7 @@ import codereview.school_mate.dto.responce.JwtResponse;
 import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.dto.responce.StudentResponseDto;
 import codereview.school_mate.dto.responce.TeacherResponseDto;
+import codereview.school_mate.dto.responce.AdminResponseDto;
 import codereview.school_mate.exception.IncorrectUsernameException;
 import codereview.school_mate.exception.JwtTokenException;
 import codereview.school_mate.exception.NotFoundException;
@@ -18,6 +20,7 @@ import codereview.school_mate.service.TeacherService;
 import codereview.school_mate.service.ParentService;
 import codereview.school_mate.service.StudentService;
 import codereview.school_mate.service.UserService;
+import codereview.school_mate.service.AdminService;
 import codereview.school_mate.utils.JwtTokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -48,6 +51,7 @@ public class AuthServiceImpl implements AuthService {
     private final StudentService studentService;
     private final ParentService parentService;
     private final TeacherService teacherService;
+    private final AdminService adminService;
     private final UserMapper userMapper;
 
     @Override
@@ -137,5 +141,16 @@ public class AuthServiceImpl implements AuthService {
         User user = userService.create(userMapper.teacherDtoToRegistrationDto(teacherRegistrationRequestDto));
 
         return teacherService.createTeacher(teacherRegistrationRequestDto, user);
+    }
+
+    @Transactional
+    @Override
+    public AdminResponseDto createNewAdministration(AdminRegistrationRequestDto adminRegistrationRequestDto) {
+        if (userService.findByUsername(adminRegistrationRequestDto.getUsername()).isPresent()) {
+            throw new IncorrectUsernameException("User with the specified name already exists");
+        }
+        User user = userService.create(userMapper.adminDtoToRegistrationDto(adminRegistrationRequestDto));
+
+        return adminService.createAdmin(adminRegistrationRequestDto, user);
     }
 }

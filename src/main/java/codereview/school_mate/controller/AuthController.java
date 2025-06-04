@@ -1,6 +1,7 @@
 package codereview.school_mate.controller;
 
 import codereview.school_mate.dto.request.JwtRequest;
+import codereview.school_mate.dto.request.registration.AdminRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.ParentRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.StudentRegistrationRequestDto;
 import codereview.school_mate.dto.request.registration.TeacherRegistrationRequestDto;
@@ -8,12 +9,14 @@ import codereview.school_mate.dto.responce.JwtResponse;
 import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.dto.responce.StudentResponseDto;
 import codereview.school_mate.dto.responce.TeacherResponseDto;
+import codereview.school_mate.dto.responce.AdminResponseDto;
 import codereview.school_mate.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +40,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Не авторизован")
     })
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> createAuthToken(@RequestBody JwtRequest authRequest) {
+    public ResponseEntity<JwtResponse> createAuthToken(@Valid @RequestBody JwtRequest authRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.createAuthToken(authRequest));
     }
 
@@ -58,7 +61,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Не авторизован")
     })
     @PostMapping("/signup/student")
-    public ResponseEntity<StudentResponseDto> createNewStudent(@RequestBody StudentRegistrationRequestDto studentRegistrationRequestDto) {
+    public ResponseEntity<StudentResponseDto> createNewStudent(@Valid @RequestBody StudentRegistrationRequestDto studentRegistrationRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.createNewStudent(studentRegistrationRequestDto));
     }
 
@@ -69,7 +72,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Не авторизован")
     })
     @PostMapping("/signup/parent")
-    public ResponseEntity<ParentResponseDto> createNewParent(@RequestBody ParentRegistrationRequestDto parentRegistrationRequestDto) {
+    public ResponseEntity<ParentResponseDto> createNewParent(@Valid @RequestBody ParentRegistrationRequestDto parentRegistrationRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.createNewParent(parentRegistrationRequestDto));
     }
 
@@ -80,12 +83,12 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Не авторизован")
     })
     @PostMapping("/signup/teacher")
-    public ResponseEntity<TeacherResponseDto> createNewTeacher(@RequestBody TeacherRegistrationRequestDto teacherRegistrationRequestDto) {
+    public ResponseEntity<TeacherResponseDto> createNewTeacher(@Valid @RequestBody TeacherRegistrationRequestDto teacherRegistrationRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.createNewTeacher(teacherRegistrationRequestDto));
     }
 
-//    @PostMapping("/signup/admin")
-//    public ResponseEntity<UserDto> createNewStudent(@RequestBody StudentRegistrationRequestDto studentRegistrationRequestDto) {
-//        return ResponseEntity.ok(authService.createNewUser(studentRegistrationRequestDto));
-//    }
+    @PostMapping("/signup/admin")
+    public ResponseEntity<AdminResponseDto> createNewAdmin(@Valid @RequestBody AdminRegistrationRequestDto adminRegistrationRequestDto) {
+        return ResponseEntity.ok(authService.createNewAdministration(adminRegistrationRequestDto));
+    }
 }
