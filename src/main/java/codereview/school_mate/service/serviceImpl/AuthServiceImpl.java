@@ -10,6 +10,7 @@ import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.dto.responce.StudentResponseDto;
 import codereview.school_mate.dto.responce.TeacherResponseDto;
 import codereview.school_mate.dto.responce.AdminResponseDto;
+import codereview.school_mate.dto.responce.UserResponseDto;
 import codereview.school_mate.exception.IncorrectUsernameException;
 import codereview.school_mate.exception.JwtTokenException;
 import codereview.school_mate.exception.NotFoundException;
@@ -142,6 +143,14 @@ public class AuthServiceImpl implements AuthService {
 
         return teacherService.createTeacher(teacherRegistrationRequestDto, user);
     }
+
+
+    @Override
+    public UserResponseDto getUser(String username) {
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User with username = " + username + " not found"));
+        log.info("user = {}", user);
+        return userMapper.userToUserResponseDto(user);
 
     @Transactional
     @Override

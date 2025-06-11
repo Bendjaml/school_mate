@@ -10,6 +10,7 @@ import codereview.school_mate.dto.responce.ParentResponseDto;
 import codereview.school_mate.dto.responce.StudentResponseDto;
 import codereview.school_mate.dto.responce.TeacherResponseDto;
 import codereview.school_mate.dto.responce.AdminResponseDto;
+import codereview.school_mate.dto.responce.UserResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthService {
@@ -19,5 +20,6 @@ public interface AuthService {
     StudentResponseDto createNewStudent(StudentRegistrationRequestDto studentRegistrationRequestDto);
     ParentResponseDto createNewParent(ParentRegistrationRequestDto parentRegistrationRequestDto);
     TeacherResponseDto createNewTeacher(TeacherRegistrationRequestDto teacherRegistrationRequestDto);
+    UserResponseDto getUser(String username);
     AdminResponseDto createNewAdministration(AdminRegistrationRequestDto adminRegistrationRequestDto);
 }
