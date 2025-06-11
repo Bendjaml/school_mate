@@ -243,6 +243,7 @@ class TeacherServiceTest {
         teacher.setName("Teacher_" + counter.getAndIncrement());
         teacher.setSurname("Surname_" + counter.getAndIncrement());
         teacher.setPatronymic("Patronymic_" + counter.getAndIncrement());
+
         return teacherRepository.save(teacher);
     }
 

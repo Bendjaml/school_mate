@@ -140,6 +140,7 @@ class StudentServiceTest {
         StudentRequestDto updateRequest = new StudentRequestDto();
         updateRequest.setName("Updated");
         updateRequest.setSurname("Student");
+
         updateRequest.setPatronymic("TestPatronymic");
         updateRequest.setParentId(newParent.getId());
         updateRequest.setSchoolClassId(newClass.getId());
@@ -170,6 +171,7 @@ class StudentServiceTest {
         request.setName("New");
         request.setSurname("Student");
         request.setPatronymic("TestPatronymic");
+
 //        request.setParentId(nonExistentParentId);
         request.setSchoolClassId(schoolClass.getId());
 
@@ -184,6 +186,7 @@ class StudentServiceTest {
         request.setName("New");
         request.setSurname("Student");
         request.setPatronymic("TestPatronymic");
+
         request.setSchoolClassId(nonExistentClassId);
         User user = new User();
         user.setUsername("student");
@@ -307,6 +310,7 @@ class StudentServiceTest {
         student.setName("Student_" + counter.getAndIncrement());
         student.setSurname("Surname_" + counter.getAndIncrement());
         student.setPatronymic("Patronymic_" + counter.getAndIncrement());
+
 //        student.setParent(parent);
         student.setSchoolClass(schoolClass);
         student.setUser(user);
